@@ -13,7 +13,6 @@ use core::panic::PanicInfo;
 use vga_buffer::ColorCode;
 
 
-#[allow(undefined_naked_function_abi)]
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
     WRITER.lock().set_color(ColorCode::new(Red, Black));
@@ -29,6 +28,7 @@ pub extern "C" fn _start() -> ! {
     println!("::..:::::::::........::..:::::..::..:::::..:::::..::::::::::.......::::......:::");
     println!("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::");
     println!("\n\n\n\n\n");
+    perry_os::init();
     WRITER.lock().set_color(ColorCode::new(Green, Black));
     println!("All systems up and running!");
 

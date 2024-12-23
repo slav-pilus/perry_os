@@ -1,15 +1,24 @@
 #![no_std]
 #![cfg_attr(test, no_main)]
 #![feature(custom_test_frameworks)]
+#![feature(abi_x86_interrupt)]
 #![test_runner(crate::test_runner)]
 #![reexport_test_harness_main = "test_main"]
 
 pub mod serial;
 pub mod vga_buffer;
+pub mod interrupts;
+pub mod gdt;
 
 use core::panic::PanicInfo;
 
 const ISA_DEBUG_EXIT_PORT: u16 = 0xf4;
+
+
+pub fn init() {
+    gdt::init();
+    interrupts::init_idt();
+}
 
 pub trait Testable {
     fn run(&self) -> ();
@@ -44,6 +53,7 @@ pub fn test_panic_handler(info: &PanicInfo) -> ! {
 #[cfg(test)]
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
+    init();
     test_main();
     loop {}
 }
@@ -68,4 +78,9 @@ pub fn exit_qemu(exit_code: QemuExitCode) {
         let mut port = Port::new(ISA_DEBUG_EXIT_PORT);
         port.write(exit_code as u32);
     }
+}
+
+#[test_case]
+fn test_breakpoint_exception() {
+    x86_64::instructions::interrupts::int3();
 }

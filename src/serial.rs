@@ -16,7 +16,6 @@ pub fn _print(args: ::core::fmt::Arguments) {
     SERIAL1.lock().write_fmt(args).expect("Printing to serial failed");
 }
 
-/// Prints to the host through the serial interface.
 #[macro_export]
 macro_rules! serial_print {
     ($($arg:tt)*) => {
@@ -24,7 +23,6 @@ macro_rules! serial_print {
     };
 }
 
-/// Prints to the host through the serial interface, appending a newline.
 #[macro_export]
 macro_rules! serial_println {
     () => ($crate::serial_print!("\n"));
